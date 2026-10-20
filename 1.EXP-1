@@ -1,0 +1,84 @@
+EXP - 1 : Data Profiling and Preprocessing
+
+CODE:
+
+import pandas as pd
+# Loading dataset
+df = pd.read_csv("titanic.csv")
+--------------------------------
+
+# Data Profiling
+
+print(df.head())
+print(df.shape)
+print(df.info())
+print(df.describe())
+print(df.dtypes)
+-------------------------------
+
+# Data cleaning
+# (i) Drop duplicates
+df.drop_duplicates()
+print(df.duplicated().sum())
+
+#(ii) Fill Missing Values 
+# --> [ Age, fare with median]
+# --> [embarked with mode ] [P,Q,S]
+# --> Drop cabin [many missing value]
+
+if 'Age' in df.columns:
+    df['Age'] = df['Age'].fillna(df['Age'].median())
+
+if 'Fare' in df.columns:
+    df['Fare'] = df['Fare'].fillna(df['Fare'].median())
+
+if 'Embarked' in df.columns:
+    df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
+
+if 'Cabin' in df.columns:
+    df = df.drop('Cabin',axis= 1)
+
+print(df.isnull().sum())
+----------------------------------------------------------------------------
+
+# Encoding : Converting categorial data into numerical format
+# --> sex and embarked do encoding
+from sklearn.preprocessing import LabelEncoder
+encoder = LabelEncoder()
+
+if 'Sex' in df.columns:
+    df['Sex'] = encoder.fit_transform(df['Sex'])
+
+if 'Embarked' in df.columns:
+    df['Embarked'] = encoder.fit_transform(df['Embarked'])
+  ------------------------------------------------------------------------
+df.to_csv("clean.csv",index= False)
+print(df.head())
+---------------------------------------------------------------------------
+
+# Scaling: Bringing numerical features to simillar range so that features with larger value do not dominate dataset
+
+from sklearn.preprocessing import StandardScaler
+# Creating copy of original dataset
+scaled_df = df.copy()
+
+# choosing columns to scale
+# Age,Fare,Parch,SiSp
+
+scaled_col = ['Age','Fare','Parch','Sisp']
+
+# choosing / checking available columns
+
+available_col = [i for i in scaled_col if i in scaled_df.columns]
+
+# Creating object
+scaler = StandardScaler()
+
+scaled_df[available_col] = scaler.fit_transform(scaled_df[available_col])
+
+scaled_df.to_csv("scaled.csv",index = False)
+
+df3 = pd.read_csv("scaled.csv")
+print(df3.head())
+ 
+---------------------------------------------------------------------------------------------------------
