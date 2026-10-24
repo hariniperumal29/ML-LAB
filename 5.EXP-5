@@ -1,0 +1,56 @@
+import pandas as pd
+df= pd.read_csv("heart.csv")
+print(df.head())
+print(df.shape)
+print(df.isnull().sum())
+print(df.columns.tolist())
+--------------------------
+target_col = 'output'
+X = df.drop(target_col,axis =1)
+Y= df[target_col]
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,Y,test_size =0.2,random_state=42)
+print(len(X_train))
+print(len(X_test))
+
+------------------------------------------------
+# Naive Baayes : Based on highest probability
+from sklearn.naive_bayes import GaussianNB
+
+model = GaussianNB()
+model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+
+-----------------------------------------------
+from sklearn.metrics import accuracy_score,precision_score,recall_score,confusion_matrix,classification_report
+
+accuracy = accuracy_score(y_test,y_pred)
+precison= precision_score(y_test,y_pred)
+recall =recall_score(y_test,y_pred)
+print(confusion_matrix(y_test,y_pred))
+print(classification_report(y_test,y_pred))
+
+print("Accuracy",round(accuracy,2))
+print("Precision",round(precison,2))
+print("Recall",round(recall))
+-----------------------------------------------------------
+from sklearn.metrics import roc_auc_score,roc_curve
+y_prob = model.predict_proba(X_test)[:,1] # all rows and 1 index which contains prob. of positive class
+roc_score = roc_auc_score(y_test,y_prob)
+print(round(roc_score,2))
+--------------------------------------------------------------------
+# ploting:
+import matplotlib.pyplot as plt
+
+fpr,tpr,threshold = roc_curve(y_test,y_prob)
+plt.figure(figsize=(12,8))
+# ROC CURVE [fpr vs tpr]
+plt.plot([0,1],[0,1],linestyle='--')
+# AUC score[numerical val that summarizes graph]
+plt.plot(fpr,tpr,label="AUC")
+plt.legend()
+plt.xlabel("FPR")
+plt.ylabel("TPR")
+plt.grid(True)
+plt.show()
