@@ -61,7 +61,7 @@ df['Title'] = df['Name'].str.extract('([A-Za-z]+)\.',expand =False)
 rare_titles = ['Lady','Sir','Don','Dona','Dr','Countess','Capt','Col','Major','Rev','Jonkheer']
 df['Title'] = df['Title'].replace(rare_titles,'Rare')
 df['Title'] = df['Title'].replace(['Mlle','Ms'],'Miss')
-df['Title'] = df['Title'].replace(['Mrs','Mme'],'Mrs')
+df['Title'] = df['Title'].replace('Mme','Mrs')
 ------------------------------------------------------------------------------------------------
 
 # Label Encoding 
@@ -128,5 +128,5 @@ model.fit(X_train,y_train)
 -----------------------------------------------------------
 y_pred = model.predict(X_test)
 from sklearn.metrics import accuracy_score
-accuracy = accuracy_score(y_pred,y_test)
+accuracy = accuracy_score(y_test,y_pred)
 print(round (accuracy *100,2))
