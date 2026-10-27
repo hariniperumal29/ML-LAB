@@ -11,7 +11,11 @@ df = pd.read_csv("titanic.csv")
 
 print(df.head())
 print(df.shape)
+#Prints summary of dataframe :
+cl_names,datatypes,non_null values,memory usage
 print(df.info())
+# Privides sattistical summary
+min,max,std,mean,count ,1st quartile,med,3 rrd quartile
 print(df.describe())
 print(df.dtypes)
 -------------------------------
@@ -52,8 +56,10 @@ if 'Sex' in df.columns:
 if 'Embarked' in df.columns:
     df['Embarked'] = encoder.fit_transform(df['Embarked'])
   ------------------------------------------------------------------------
-df.to_csv("clean.csv",index= False)
-print(df.head())
+df.to_csv("clean_titanic.csv",index = False)
+
+df2 = pd.read_csv("clean_titanic.csv")
+print(df2.head())
 ---------------------------------------------------------------------------
 
 # Scaling: Bringing numerical features to simillar range so that features with larger value do not dominate dataset
