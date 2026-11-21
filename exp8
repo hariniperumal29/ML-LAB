@@ -1,0 +1,77 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import KFold
+from sklearn.ensemble import RandomForestClassifier;
+from sklearn.metrics import accuracy_score
+
+df = pd.read_csv("heart.csv")
+print(df.head())
+print(df.shape)
+print(df.isnull().sum())
+
+target = 'output'
+X = df.drop(target,axis = 1)
+y = df[target]
+
+
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42,stratify = y)
+print(len(X_train))
+print(len(X_test))
+
+model = RandomForestClassifier(
+        n_estimators = 100,
+        random_state = 42)
+model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+acc = accuracy_score(y_test,y_pred)
+
+print(accuracy_score(y_test,y_pred))
+
+# kfold:
+fold5 = KFold(n_splits = 5,shuffle= True,random_state = 42)
+score5 = cross_val_score (model,X,y,cv=fold5,scoring='accuracy')
+print(score5)
+print(score5.mean())
+print(score5.std())
+
+kf10 = KFold(
+        n_splits = 10,
+        shuffle = True,
+        random_state = 42)
+
+score10 = cross_val_score( model,X,y,cv=kf10,scoring='accuracy')
+print(score10)
+print(score10.mean())
+print(score10.std())
+
+data = pd.DataFrame(
+    {
+        'Metrix' : ["10","5","train_test_split"],
+        "aCCURACY" : [score10.mean(),score5.mean(),acc]
+    }
+)
+print(data)
+
+# plot bar of all 3 acc
+plt.bar(data['Metrix'],data['aCCURACY'],color=['red','blue','green'])
+plt.ylim(0,1)
+plt.grid(axis ='y')
+plt.show()
+
+plt.figure(figsize=(8,5))
+
+plt.plot(range(1,6), score5, marker='o', label="5-Fold")
+plt.plot(range(1,11), score10, marker='s', label="10-Fold")
+
+plt.xlabel("Fold Number")
+plt.ylabel("Accuracy")
+plt.title("Fold-wise Accuracy")
+plt.legend()
+plt.show()
+
+print("Cross Validation Completed Successfully.")
+
